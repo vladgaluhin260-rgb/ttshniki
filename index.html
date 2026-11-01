@@ -259,11 +259,11 @@
                     </div>
                 </div>
 
-                <!-- TikTok URL -->
+                <!-- TikTok URL / Text -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">4. Ссылка на TikTok / Профиль <span class="text-gray-500 font-normal">(если есть)</span></label>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">4. Ссылка на TikTok / Профиль <span class="text-gray-500 font-normal">(если нет, можно оставить пустым или написать «нет»)</span></label>
                     <div class="relative">
-                        <input type="url" id="inputTikTok" placeholder="https://tiktok.com/@your_nick" 
+                        <input type="text" id="inputTikTok" placeholder="https://tiktok.com/@your_nick или «нет»" 
                             class="w-full bg-black/60 border border-pubg-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition pl-9">
                         <i class="fa-brands fa-tiktok text-gray-500 absolute left-3 top-3 text-xs"></i>
                     </div>
@@ -479,6 +479,15 @@
             }
         }
 
+        // Helper to format TikTok value
+        function formatTikTokValue(value) {
+            const trimmed = value.trim().toLowerCase();
+            if (!trimmed || trimmed === 'нет' || trimmed === 'нету' || trimmed === 'нет профиля' || trimmed === '-') {
+                return 'Нет';
+            }
+            return value.trim();
+        }
+
         // Form Submission & Text Formatting
         function handleFormSubmit(e) {
             e.preventDefault();
@@ -490,7 +499,8 @@
             const nick = document.getElementById('inputNick').value.trim();
             const id = document.getElementById('inputId').value.trim();
             let tgUser = document.getElementById('inputTg').value.trim();
-            const tiktok = document.getElementById('inputTikTok').value.trim() || 'Не указана';
+            const rawTikTok = document.getElementById('inputTikTok').value;
+            const tiktok = formatTikTokValue(rawTikTok);
             const age = document.getElementById('inputAge').value.trim();
             const prime = document.getElementById('inputPrimeTime').value;
 
@@ -524,7 +534,7 @@
                 const nick = document.getElementById('inputNick').value || '...';
                 const id = document.getElementById('inputId').value || '...';
                 const tgUser = document.getElementById('inputTg').value || '...';
-                const tiktok = document.getElementById('inputTikTok').value || 'Не указано';
+                const tiktok = formatTikTokValue(document.getElementById('inputTikTok').value);
                 const age = document.getElementById('inputAge').value || '...';
                 const prime = document.getElementById('inputPrimeTime').value;
 
