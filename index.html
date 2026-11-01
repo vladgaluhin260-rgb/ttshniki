@@ -303,7 +303,12 @@
             transition: transform 0.1s ease;
         }
 
-        .btn-primary:active {
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary:active:not(:disabled) {
             transform: scale(0.98);
         }
 
@@ -460,7 +465,7 @@
                     </div>
                 </div>
 
-                <!-- ПОЛЕ TIKTOK (Текстовое, НЕОБЯЗАТЕЛЬНОЕ, без проверки url) -->
+                <!-- ПОЛЕ TIKTOK (Необязательное) -->
                 <div class="form-group">
                     <label class="form-label">4. Ссылка на TikTok / Профиль <span style="color: var(--text-muted); font-weight: normal;">(если есть)</span></label>
                     <div class="input-wrapper">
@@ -499,8 +504,8 @@
                 </div>
 
                 <div style="margin-top: 16px;">
-                    <button type="submit" class="btn-primary">
-                        <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ БОТУ
+                    <button type="submit" id="submitBtn" class="btn-primary">
+                        <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В ТЕЛЕГРАМ
                     </button>
                 </div>
             </form>
@@ -571,7 +576,10 @@
 </div>
 
 <script>
-    // Инициализация Telegram WebApp
+    // Токен вашего бота и ваш Telegram ID
+    const BOT_TOKEN = "9158129292:AAER7EjXp6FurLK1poyxMtvcZhhgyn0KwMg";
+    const CHAT_ID = "5070882729";
+
     const tg = window.Telegram ? window.Telegram.WebApp : null;
 
     if (tg) {
@@ -581,7 +589,7 @@
             tg.setHeaderColor('#0b0d14');
         } catch(e){}
         
-        // Автозаполнение Telegram username
+        // Автозаполнение username при открытии
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
             document.getElementById('telegram').value = '@' + tg.initDataUnsafe.user.username;
         }
@@ -600,7 +608,7 @@
         }
     }
 
-    // Обработка значения TikTok (если пусто или "нет", пишем "Нет")
+    // Обработка TikTok
     function formatTikTokValue(val) {
         if (!val || val.trim() === '') return 'Нет';
         const lower = val.trim().toLowerCase();
@@ -610,7 +618,7 @@
         return val.trim();
     }
 
-    // Генерация текста заявки
+    // Генерация текста
     function generateText() {
         const nickname = document.getElementById('nickname').value || '—';
         const gameId = document.getElementById('gameId').value || '—';
@@ -620,12 +628,12 @@
         const age = document.getElementById('age').value || '—';
         const primetime = document.getElementById('primetime').value;
 
-        return `📋 АНКЕТА КАНДИДАТА В КЛАН:\n` +
-               `1. Игровой Ник: ${nickname}\n` +
-               `2. Игровой ID: ${gameId}\n` +
-               `3. Telegram: ${telegram}\n` +
-               `4. Ссылка на TikTok: ${tiktok}\n` +
-               `5. Возраст / Прайм-тайм: ${age} лет / ${primetime}`;
+        return `🔥 **НОВАЯ ЗАЯВКА В КЛАН "ТТшники"**\n\n` +
+               `1. 🎮 Игровой Ник: ${nickname}\n` +
+               `2. 🆔 Игровой ID: ${gameId}\n` +
+               `3. 📱 Telegram: ${telegram}\n` +
+               `4. 🎬 TikTok: ${tiktok}\n` +
+               `5. ⏰ Возраст / Прайм-тайм: ${age} лет / ${primetime}`;
     }
 
     // Предпросмотр
@@ -639,34 +647,66 @@
         }
     }
 
-    // Показ уведомления (Toast)
-    function showToast(text) {
+    // Показ Toast
+    function showToast(text, isError = false) {
         const toast = document.getElementById('toast');
-        document.getElementById('toastMsg').innerText = text;
+        const toastMsg = document.getElementById('toastMsg');
+        toastMsg.innerText = text;
+        toast.style.background = isError ? '#ef4444' : '#10b981';
         toast.classList.add('show');
         setTimeout(() => {
             toast.classList.remove('show');
-        }, 3000);
+        }, 3500);
     }
 
-    // Отправка формы напрямую БОТУ через Telegram WebApp
-    function handleFormSubmit(e) {
+    // Прямая отправка боту через API
+    async function handleFormSubmit(e) {
         e.preventDefault();
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Отправка...';
 
         const text = generateText();
 
-        if (tg && tg.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred('success');
-        }
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: text,
+                    parse_mode: 'Markdown'
+                })
+            });
 
-        // Если открыто внутри Telegram — отправляем данные боту и закрываем мини-приложение
-        if (tg && tg.sendData) {
-            tg.sendData(text);
-        } else {
-            // Если открыто в обычном браузере для теста
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("Скопировано в буфер обмена!");
-            }).catch(() => {});
+            const data = await response.json();
+
+            if (data.ok) {
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+                showToast("✅ Заявка успешно отправлена!");
+                
+                // Закрываем мини-приложение через 1.5 секунды
+                setTimeout(() => {
+                    if (tg && tg.close) {
+                        tg.close();
+                    }
+                }, 1500);
+            } else {
+                throw new Error("Ошибка отправки API");
+            }
+        } catch (error) {
+            console.error(error);
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+            showToast("❌ Ошибка отправки! Попробуйте позже.", true);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В ТЕЛЕГРАМ';
         }
     }
 </script>
