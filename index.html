@@ -495,7 +495,7 @@
                     </div>
                 </div>
 
-                <!-- Выбор языка (только русский, белорусский, казахский) -->
+                <!-- Выбор языка (русский, белорусский, казахский) -->
                 <div class="form-group">
                     <label class="form-label">6. Язык общения <span>*</span></label>
                     <div class="input-wrapper">
@@ -589,6 +589,7 @@
 
 <script>
     const TELEGRAM_BOT_TOKEN = "9158129292:AAER7EjXp6FurLK1poyxMtvcZhhgyn0KwMg";
+    // Указан ID группы клана
     const TELEGRAM_CHAT_ID = "-1004355844765";
 
     const tg = window.Telegram ? window.Telegram.WebApp : null;
@@ -690,7 +691,7 @@
         }, 3500);
     }
 
-    // Отправка формы в группу клана
+    // Отправка формы в группу клана без кнопок подтверждения
     function handleFormSubmit(e) {
         e.preventDefault();
 
