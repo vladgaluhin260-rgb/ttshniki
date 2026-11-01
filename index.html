@@ -1,628 +1,681 @@
 <!DOCTYPE html>
-<html lang="ru" class="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ТТшники — PUBG Mobile Clan App</title>
-    
-    <!-- Telegram Web App SDK -->
+    <title>Набор в клан ТТшники PUBG Mobile</title>
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Rajdhani & Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        pubg: {
-                            gold: '#F2A900',
-                            neonPink: '#FF2A85',
-                            neonPurple: '#9D00FF',
-                            neonCyan: '#00F0FF',
-                            cardBg: '#12131A',
-                            darkBg: '#090A0F',
-                            border: '#262838'
-                        }
-                    },
-                    fontFamily: {
-                        gaming: ['Rajdhani', 'sans-serif'],
-                        body: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body {
-            background-color: #090A0F;
-            color: #F3F4F6;
-            font-family: 'Inter', sans-serif;
-            touch-action: manipulation;
+        :root {
+            --bg-color: #0b0d14;
+            --card-bg: rgba(22, 27, 46, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent-pink: #ff0055;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #7928ca;
+            --accent-gold: #ffb703;
+            --input-bg: #121624;
+            --input-border: rgba(255, 255, 255, 0.12);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #090A0F;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #262838;
-            border-radius: 4px;
-        }
-
-        /* Neon Glow Effects */
-        .glow-pink {
-            box-shadow: 0 0 20px rgba(255, 42, 133, 0.35);
-        }
-        .glow-purple {
-            box-shadow: 0 0 20px rgba(157, 0, 255, 0.3);
-        }
-        .glow-gold {
-            box-shadow: 0 0 15px rgba(242, 169, 0, 0.3);
-        }
-        .text-glow-pink {
-            text-shadow: 0 0 10px rgba(255, 42, 133, 0.6);
-        }
-        
-        /* Glassmorphism Card */
-        .glass-card {
-            background: rgba(18, 19, 26, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-        }
-        .glass-card-interactive {
-            background: rgba(18, 19, 26, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 42, 133, 0.2);
-            transition: all 0.25s ease;
-        }
-        .glass-card-interactive:active {
-            transform: scale(0.98);
-            border-color: rgba(255, 42, 133, 0.6);
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.15) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            padding: 16px;
+            padding-bottom: 90px;
+            min-height: 100vh;
         }
 
-        /* Custom Animated Gradient Border */
-        .gradient-border-box {
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* App Header / Banner */
+        .header-card {
+            background: linear-gradient(135deg, rgba(30, 15, 50, 0.9), rgba(15, 25, 45, 0.9));
+            border: 1px solid rgba(255, 0, 85, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 20px;
             position: relative;
-            border-radius: 1rem;
-            background: #12131A;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
         }
-        .gradient-border-box::before {
+
+        .header-card::before {
             content: '';
             position: absolute;
-            inset: -1.5px;
-            border-radius: 1.05rem;
-            background: linear-gradient(135deg, #FF2A85, #9D00FF, #00F0FF);
-            z-index: -1;
-            opacity: 0.7;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-cyan));
         }
 
-        /* Tab Active Indicator Styling */
+        .clan-title-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .clan-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(45deg, #ff0055, #4f46e5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .clan-info h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #ffffff, #d1d5db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clan-badge {
+            background: rgba(255, 183, 3, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 183, 3, 0.3);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .clan-sub {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            padding: 10px;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: rgba(18, 22, 36, 0.8);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 0;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
         .tab-btn.active {
-            color: #FF2A85;
-            border-bottom: 2px solid #FF2A85;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(255, 0, 85, 0.3);
         }
 
-        /* Pulsing status dot */
-        @keyframes pulse-fast {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.9); }
+        /* Form & Cards */
+        .content-section {
+            display: none;
         }
-        .pulse-dot {
-            animation: pulse-fast 1.8s infinite ease-in-out;
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+        }
+
+        .section-header i {
+            color: var(--accent-pink);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-label span {
+            color: var(--accent-pink);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px 12px 40px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-pink);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Dynamic Preview */
+        .preview-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #d1d5db;
+            white-space: pre-wrap;
+            margin-top: 14px;
+            display: none;
+        }
+
+        .preview-box.show {
+            display: block;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 0, 85, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.1s ease;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Requirements List */
+        .req-list {
+            list-style: none;
+        }
+
+        .req-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            background: rgba(255,255,255,0.02);
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .req-icon {
+            color: var(--accent-cyan);
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        .req-text h4 {
+            font-size: 13px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .req-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
-<body class="pb-24 pt-2 px-4 max-w-md mx-auto min-h-screen relative overflow-x-hidden">
+<body>
 
-    <!-- TOP NAV / BRAND BAR -->
-    <header class="flex items-center justify-between py-3 mb-3 border-b border-pubg-border/50">
-        <div class="flex items-center space-x-2">
-            <span class="flex h-2.5 w-2.5 relative">
-                <span class="pulse-dot absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 font-gaming">НАБОР ОТКРЫТ</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <span class="text-xs bg-pubg-neonPink/10 text-pubg-neonPink border border-pubg-neonPink/30 px-2 py-0.5 rounded-full font-mono flex items-center gap-1">
-                <i class="fa-brands fa-tiktok text-[10px]"></i> Media Clan
-            </span>
-            <button id="shareBtn" class="text-gray-400 hover:text-white p-1 text-sm" title="Поделиться">
-                <i class="fa-solid fa-share-nodes"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- CLAN MAIN HEADER CARD -->
-    <section class="gradient-border-box p-4 mb-4 glow-pink shadow-2xl">
-        <div class="flex items-center gap-4 mb-3">
-            <!-- Clan Mascot Avatar -->
-            <div class="relative w-16 h-16 rounded-xl bg-gradient-to-br from-pubg-neonPink via-purple-900 to-black p-0.5 shadow-lg flex-shrink-0">
-                <div class="w-full h-full bg-pubg-darkBg rounded-[10px] flex items-center justify-center relative overflow-hidden">
-                    <i class="fa-solid fa-[#ffffff] fa-dragon text-3xl text-pubg-neonPink filter drop-shadow-[0_0_8px_rgba(255,42,133,0.8)]"></i>
-                    <span class="absolute bottom-0 inset-x-0 text-[8px] bg-pubg-neonPink text-black font-extrabold text-center py-0.5 uppercase tracking-tighter">PUBGM</span>
-                </div>
+<div class="container">
+    <!-- Header Banner -->
+    <div class="header-card">
+        <div class="clan-title-box">
+            <div class="clan-avatar">
+                <i class="fa-solid fa-dragon"></i>
             </div>
-
-            <!-- Title & Badges -->
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                    <h1 class="text-2xl font-extrabold font-gaming tracking-wider text-white text-glow-pink truncate">ТТшники</h1>
-                    <span class="bg-gradient-to-r from-amber-500 to-pubg-gold text-black font-bold text-[10px] px-2 py-0.5 rounded shadow">
-                        УР. 10
-                    </span>
-                </div>
-                <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
-                    <i class="fa-solid fa-shield-halved text-pubg-neonCyan text-[11px]"></i> Официальный Клан • Media / TikTok
-                </p>
-                <div class="mt-2 flex items-center text-xs text-gray-300">
-                    <span class="text-pubg-neonPink font-bold mr-1">53</span> свободных мест из 60
-                </div>
+            <div class="clan-info">
+                <h1>ТТшники <span class="clan-badge">Ур. 10</span></h1>
+                <div class="clan-sub">Официальный Медиа-Клан PUBG Mobile</div>
             </div>
         </div>
 
-        <!-- Progress Bar for Members -->
-        <div class="space-y-1 mb-3">
-            <div class="flex justify-between text-[11px] font-semibold">
-                <span class="text-gray-400">Укомплектованность</span>
-                <span class="text-pubg-gold font-mono">7 / 60 (12%)</span>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-val" style="color: var(--accent-pink);">7 / 60</div>
+                <div class="stat-label">Места</div>
             </div>
-            <div class="w-full bg-gray-800/80 rounded-full h-2 overflow-hidden p-0.5 border border-gray-700/50">
-                <div class="bg-gradient-to-r from-pubg-neonPink via-purple-500 to-pubg-neonCyan h-full rounded-full transition-all duration-1000 ease-out" style="width: 11.6%;"></div>
+            <div class="stat-item">
+                <div class="stat-val">79.8%</div>
+                <div class="stat-label">Рейтинг нед.</div>
             </div>
-        </div>
-
-        <!-- Rating Stats Grid -->
-        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gray-800/80">
-            <div class="bg-black/40 rounded-lg p-2 border border-white/5 flex items-center justify-between">
-                <div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Недельный рейтинг</div>
-                    <div class="text-base font-bold font-gaming text-emerald-400">79.8%</div>
-                </div>
-                <i class="fa-solid fa-chart-line text-emerald-500/40 text-lg"></i>
-            </div>
-            <div class="bg-black/40 rounded-lg p-2 border border-white/5 flex items-center justify-between">
-                <div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Рейтинг за сезон</div>
-                    <div class="text-base font-bold font-gaming text-pubg-gold">78.5%</div>
-                </div>
-                <i class="fa-solid fa-trophy text-pubg-gold/40 text-lg"></i>
+            <div class="stat-item">
+                <div class="stat-val">78.5%</div>
+                <div class="stat-label">Сезон</div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- NAVIGATION TABS -->
-    <div class="flex border-b border-pubg-border mb-4 text-sm font-medium text-gray-400">
-        <button id="tabFormBtn" onclick="switchTab('form')" class="tab-btn active flex-1 py-2.5 text-center transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-paper-plane text-xs"></i> Подать заявку
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('apply')">
+            <i class="fa-solid fa-paper-plane"></i> Подать заявку
         </button>
-        <button id="tabReqBtn" onclick="switchTab('req')" class="tab-btn flex-1 py-2.5 text-center transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-list-check text-xs"></i> Требования
+        <button class="tab-btn" onclick="switchTab('requirements')">
+            <i class="fa-solid fa-list-check"></i> Требования
         </button>
-        <button id="tabMediaBtn" onclick="switchTab('media')" class="tab-btn flex-1 py-2.5 text-center transition-all flex items-center justify-center gap-2">
-            <i class="fa-brands fa-tiktok text-xs"></i> Медиа & ТТ
+        <button class="tab-btn" onclick="switchTab('media')">
+            <i class="fa-brands fa-tiktok"></i> Медиа & ТТ
         </button>
     </div>
 
-    <!-- TAB CONTENT 1: FORM -->
-    <div id="tabForm" class="tab-content space-y-4">
-        <div class="glass-card rounded-2xl p-4 border border-pubg-border">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-bold font-gaming text-white flex items-center gap-2">
-                    <i class="fa-solid fa-id-card text-pubg-neonPink"></i> АНКЕТА КАНДИДАТА
-                </h2>
-                <span class="text-[10px] bg-white/5 text-gray-400 px-2 py-1 rounded">Быстрый ответ</span>
+    <!-- TAB 1: FORM -->
+    <div id="tab-apply" class="content-section active">
+        <div class="card">
+            <div class="section-header">
+                <span><i class="fa-solid fa-id-card"></i> АНКЕТА КАНДИДАТА</span>
+                <span style="font-size: 11px; color: var(--text-muted);">Быстрый ответ</span>
             </div>
-            
-            <form id="applicationForm" onsubmit="handleFormSubmit(event)" class="space-y-3.5">
-                <!-- Nickname -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Игровой Nickname <span class="text-pubg-neonPink">*</span></label>
-                    <div class="relative">
-                        <input type="text" id="inputNick" required placeholder="Например: WESTEMO×TT" 
-                            class="w-full bg-black/60 border border-pubg-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition pl-9">
-                        <i class="fa-solid fa-user text-gray-500 absolute left-3 top-3 text-xs"></i>
+
+            <form id="clanForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">1. Игровой Nickname <span>*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="nickname" class="form-control" placeholder="Например: WESTEMQ×TT" required>
                     </div>
                 </div>
 
-                <!-- ID -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Игровой ID <span class="text-pubg-neonPink">*</span></label>
-                    <div class="relative">
-                        <input type="number" id="inputId" required placeholder="Например: 5123456789" 
-                            class="w-full bg-black/60 border border-pubg-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition pl-9">
-                        <i class="fa-solid fa-hashtag text-gray-500 absolute left-3 top-3 text-xs"></i>
+                <div class="form-group">
+                    <label class="form-label">2. Игровой ID <span>*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-hashtag"></i>
+                        <input type="number" id="gameId" class="form-control" placeholder="Например: 5123456789" required>
                     </div>
                 </div>
 
-                <!-- Telegram Nick -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">3. Ваш Telegram (для связи) <span class="text-pubg-neonPink">*</span></label>
-                    <div class="relative">
-                        <input type="text" id="inputTg" required placeholder="@username" 
-                            class="w-full bg-black/60 border border-pubg-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition pl-9">
-                        <i class="fa-brands fa-telegram text-gray-500 absolute left-3 top-3 text-xs"></i>
+                <div class="form-group">
+                    <label class="form-label">3. Ваш Telegram (для связи) <span>*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-telegram"></i>
+                        <input type="text" id="telegram" class="form-control" placeholder="@username" required>
                     </div>
                 </div>
 
-                <!-- TikTok URL / Text -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-300 mb-1">4. Ссылка на TikTok / Профиль <span class="text-gray-500 font-normal">(если нет, можно оставить пустым или написать «нет»)</span></label>
-                    <div class="relative">
-                        <input type="text" id="inputTikTok" placeholder="https://tiktok.com/@your_nick или «нет»" 
-                            class="w-full bg-black/60 border border-pubg-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition pl-9">
-                        <i class="fa-brands fa-tiktok text-gray-500 absolute left-3 top-3 text-xs"></i>
+                <!-- ПОЛЕ TIKTOK (Текстовое, НЕОБЯЗАТЕЛЬНОЕ) -->
+                <div class="form-group">
+                    <label class="form-label">4. Ссылка на TikTok / Профиль <span style="color: var(--text-muted); font-weight: normal;">(если есть)</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-brands fa-tiktok"></i>
+                        <input type="text" id="tiktok" class="form-control" placeholder="Ссылка или 'нет'">
                     </div>
                 </div>
 
-                <!-- Age & Prime Time Grid -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">5. Возраст <span class="text-pubg-neonPink">*</span></label>
-                        <input type="number" id="inputAge" min="12" max="60" required placeholder="Лет" 
-                            class="w-full bg-black/60 border border-pubg-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">5. Возраст <span>*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-cake-candles"></i>
+                            <input type="number" id="age" class="form-control" placeholder="Лет" min="12" max="99" required>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Прайм-тайм <span class="text-pubg-neonPink">*</span></label>
-                        <select id="inputPrimeTime" required class="w-full bg-black/60 border border-pubg-border rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-pubg-neonPink transition">
-                            <option value="17:00 - 21:00 МСК">17:00 - 21:00 МСК</option>
-                            <option value="19:00 - 23:00 МСК" selected>19:00 - 23:00 МСК</option>
-                            <option value="Ночной актив (23:00+)">Ночной (23:00+)</option>
-                            <option value="Гибкий график">Гибкий график</option>
-                        </select>
+                    <div class="form-group">
+                        <label class="form-label">Прайм-тайм <span>*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-clock"></i>
+                            <select id="primetime" class="form-control" required style="padding-left: 36px; appearance: none;">
+                                <option value="16:00 - 20:00 МСК">16:00 - 20:00 МСК</option>
+                                <option value="19:00 - 23:00 МСК" selected>19:00 - 23:00 МСК</option>
+                                <option value="22:00+ МСК">22:00+ МСК</option>
+                                <option value="Любое время">Любое время</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Live Preview Toggle -->
-                <div class="pt-2">
-                    <button type="button" onclick="togglePreview()" class="text-xs text-pubg-neonCyan hover:underline flex items-center gap-1">
+                <div style="margin-top: 10px;">
+                    <button type="button" class="btn-secondary" onclick="togglePreview()">
                         <i class="fa-solid fa-eye"></i> Предпросмотр текста заявки
                     </button>
-                    <div id="previewBox" class="hidden mt-2 p-3 bg-black/90 border border-gray-800 rounded-xl font-mono text-[11px] text-gray-300 whitespace-pre-wrap"></div>
+                    <div id="previewBox" class="preview-box"></div>
                 </div>
 
-                <!-- Submit CTA Button -->
-                <button type="submit" class="w-full mt-3 py-3.5 px-4 bg-gradient-to-r from-pubg-neonPink to-purple-600 hover:from-pubg-neonPink/90 hover:to-purple-700 text-white font-extrabold font-gaming rounded-xl shadow-lg glow-pink flex items-center justify-center gap-2 tracking-wider text-base transition-transform active:scale-95">
-                    <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В TELEGRAM
-                </button>
+                <div style="margin-top: 16px;">
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В TELEGRAM
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- TAB CONTENT 2: REQUIREMENTS -->
-    <div id="tabReq" class="tab-content hidden space-y-3">
-        <!-- Req Item 1 -->
-        <div class="glass-card-interactive rounded-xl p-3.5 flex items-start gap-3.5">
-            <div class="w-10 h-10 rounded-lg bg-pubg-neonPink/10 border border-pubg-neonPink/30 flex items-center justify-center text-pubg-neonPink flex-shrink-0 mt-0.5">
-                <i class="fa-solid fa-gamepad text-lg"></i>
+    <!-- TAB 2: REQUIREMENTS -->
+    <div id="tab-requirements" class="content-section">
+        <div class="card">
+            <div class="section-header">
+                <span><i class="fa-solid fa-shield-halved"></i> КРИТЕРИИ ОТБОРА</span>
             </div>
-            <div>
-                <h3 class="text-sm font-bold text-white font-gaming">УРОВЕНЬ АККАУНТА 30+</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Принимаются игроки с уровнем 30 и выше, владеющие базовыми навыками игры и командного боя.</p>
-            </div>
-        </div>
 
-        <!-- Req Item 2 -->
-        <div class="glass-card-interactive rounded-xl p-3.5 flex items-start gap-3.5">
-            <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 flex-shrink-0 mt-0.5">
-                <i class="fa-solid fa-video text-lg"></i>
-            </div>
-            <div>
-                <h3 class="text-sm font-bold text-white font-gaming">ТТ / МЕДИЙНАЯ АКТИВНОСТЬ</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Огромное желание снимать TikTok ролики, участвовать в совместных контент-съемках клана и трендах.</p>
-            </div>
-        </div>
-
-        <!-- Req Item 3 -->
-        <div class="glass-card-interactive rounded-xl p-3.5 flex items-start gap-3.5">
-            <div class="w-10 h-10 rounded-lg bg-pubg-neonCyan/10 border border-pubg-neonCyan/30 flex items-center justify-center text-pubg-neonCyan flex-shrink-0 mt-0.5">
-                <i class="fa-solid fa-headset text-lg"></i>
-            </div>
-            <div>
-                <h3 class="text-sm font-bold text-white font-gaming">ОБЩЕНИЕ И АДЕКВАТНОСТЬ</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Наличие хорошего микрофона, позитивное настроение, взаимоуважение в голосовом чате.</p>
-            </div>
-        </div>
-
-        <!-- Req Item 4 -->
-        <div class="glass-card-interactive rounded-xl p-3.5 flex items-start gap-3.5">
-            <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0 mt-0.5">
-                <i class="fa-solid fa-bolt text-lg"></i>
-            </div>
-            <div>
-                <h3 class="text-sm font-bold text-white font-gaming">ВЫСОКИЙ ПРАЙМ-АКТИВ</h3>
-                <p class="text-xs text-gray-400 mt-0.5">Регулярный вход в игру и участие в клановых учениях / клановых битвах.</p>
-            </div>
-        </div>
-
-        <!-- Quick Summary Box -->
-        <div class="p-4 rounded-xl bg-gradient-to-r from-purple-950/60 to-black border border-purple-800/40 text-center space-y-2 mt-4">
-            <i class="fa-solid fa-crown text-pubg-gold text-2xl"></i>
-            <h4 class="text-sm font-bold text-white">Готов занять своё место?</h4>
-            <p class="text-xs text-gray-400">Любая платформа (iOS / Android / Эмулятор). Набор от 0 до 60 человек!</p>
-            <button onclick="switchTab('form')" class="inline-block mt-2 px-4 py-2 bg-pubg-neonPink text-white font-bold text-xs rounded-lg uppercase tracking-wider font-gaming glow-pink">
-                Заполнить Анкету
-            </button>
+            <ul class="req-list">
+                <li class="req-item">
+                    <i class="fa-solid fa-circle-check req-icon"></i>
+                    <div class="req-text">
+                        <h4>Уровень аккаунта 30+</h4>
+                        <p>Принимаются игроки с базовым опытом и прокачанным аккаунтом.</p>
+                    </div>
+                </li>
+                <li class="req-item">
+                    <i class="fa-solid fa-fire req-icon" style="color: var(--accent-pink);"></i>
+                    <div class="req-text">
+                        <h4>Высокий актив в игре</h4>
+                        <p>Регулярные онлайн-сессии, участие в клановых турнирах и учениях.</p>
+                    </div>
+                </li>
+                <li class="req-item">
+                    <i class="fa-solid fa-video req-icon" style="color: var(--accent-purple);"></i>
+                    <div class="req-text">
+                        <h4>Участие в съёмках</h4>
+                        <p>Желание снимать ролики для TikTok и участвовать в командных трендах.</p>
+                    </div>
+                </li>
+                <li class="req-item">
+                    <i class="fa-solid fa-comments req-icon" style="color: var(--accent-gold);"></i>
+                    <div class="req-text">
+                        <h4>Адекватность и микрофон</h4>
+                        <p>Умение общаться без токсичности, наличие рабочего Discord/ТГ голосовой связи.</p>
+                    </div>
+                </li>
+            </ul>
         </div>
     </div>
 
-    <!-- TAB CONTENT 3: MEDIA & SHOWCASE -->
-    <div id="tabMedia" class="tab-content hidden space-y-4">
-        <div class="glass-card rounded-xl p-3.5 border border-pubg-border text-center">
-            <div class="inline-flex p-3 rounded-full bg-pubg-neonPink/10 text-pubg-neonPink mb-2">
-                <i class="fa-brands fa-tiktok text-2xl"></i>
+    <!-- TAB 3: MEDIA -->
+    <div id="tab-media" class="content-section">
+        <div class="card">
+            <div class="section-header">
+                <span><i class="fa-brands fa-tiktok"></i> НАШ TIKTOK КОНТЕНТ</span>
             </div>
-            <h3 class="text-base font-extrabold text-white font-gaming">НАШ TikTok КОНТЕНТ</h3>
-            <p class="text-xs text-gray-400 mt-1">Мы снимаем крутые хайлайты, эдиты, смешные мемы и командные связки!</p>
-        </div>
-
-        <!-- Video Cards Mockup -->
-        <div class="grid grid-cols-2 gap-3">
-            <!-- Card 1 -->
-            <div class="relative bg-black/80 rounded-xl overflow-hidden border border-gray-800 group">
-                <div class="aspect-[9/14] bg-gradient-to-t from-black via-gray-900 to-purple-950 flex flex-col justify-between p-2.5 relative">
-                    <div class="flex justify-between items-center text-[10px] text-white/80">
-                        <span class="bg-black/60 px-2 py-0.5 rounded-full"><i class="fa-solid fa-eye"></i> 14.2k</span>
-                        <i class="fa-brands fa-tiktok text-pubg-neonPink"></i>
-                    </div>
-                    <div class="text-center my-auto">
-                        <div class="w-10 h-10 mx-auto rounded-full bg-pubg-neonPink/20 border border-pubg-neonPink flex items-center justify-center text-pubg-neonPink">
-                            <i class="fa-solid fa-play ml-0.5"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-pubg-gold uppercase font-bold">Хайлайт</span>
-                        <p class="text-xs font-bold text-white truncate">Squad Wipe ERANGEL 🚀</p>
-                        <p class="text-[10px] text-gray-400">@WESTEMO×TT</p>
-                    </div>
-                </div>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+                Мы делаем совместные нарезы, эдиты, клановые тренды и продвигаем аккаунты участников команды!
+            </p>
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-md); border: 1px dashed var(--accent-pink); text-align: center;">
+                <i class="fa-solid fa-clapperboard" style="font-size: 24px; color: var(--accent-pink); margin-bottom: 6px;"></i>
+                <div style="font-size: 12px; font-weight: 700; color: #fff;">Каждый участник получает медиа-поддержку!</div>
             </div>
-
-            <!-- Card 2 -->
-            <div class="relative bg-black/80 rounded-xl overflow-hidden border border-gray-800 group">
-                <div class="aspect-[9/14] bg-gradient-to-t from-black via-gray-900 to-pink-950 flex flex-col justify-between p-2.5 relative">
-                    <div class="flex justify-between items-center text-[10px] text-white/80">
-                        <span class="bg-black/60 px-2 py-0.5 rounded-full"><i class="fa-solid fa-eye"></i> 28.9k</span>
-                        <i class="fa-brands fa-tiktok text-pubg-neonPink"></i>
-                    </div>
-                    <div class="text-center my-auto">
-                        <div class="w-10 h-10 mx-auto rounded-full bg-pubg-neonPink/20 border border-pubg-neonPink flex items-center justify-center text-pubg-neonPink">
-                            <i class="fa-solid fa-play ml-0.5"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-[9px] text-pubg-neonCyan uppercase font-bold">Командный Трендовый ролик</span>
-                        <p class="text-xs font-bold text-white truncate">ТТшники Squad Dance 🔥</p>
-                        <p class="text-[10px] text-gray-400">@ARABIC×TT</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Join Media Team Banner -->
-        <div class="p-3 bg-gradient-to-r from-pubg-neonPink/20 to-purple-900/20 border border-pubg-neonPink/40 rounded-xl flex items-center justify-between">
-            <div class="pr-2">
-                <div class="text-xs font-bold text-white">Умеешь монтажить?</div>
-                <div class="text-[11px] text-gray-400">Ищем креаторов и эдиторов!</div>
-            </div>
-            <button onclick="switchTab('form')" class="px-3 py-1.5 bg-pubg-neonPink text-white font-bold text-xs rounded-lg font-gaming flex-shrink-0">
-                Вступить
-            </button>
         </div>
     </div>
+</div>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-900/95 text-white border border-pubg-neonPink px-4 py-2.5 rounded-xl text-xs font-medium shadow-2xl flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300 z-50">
-        <i class="fa-solid fa-circle-check text-pubg-neonPink text-sm"></i>
-        <span id="toastMsg">Сообщение скопировано!</span>
-    </div>
+<!-- Toast -->
+<div id="toast" class="toast">
+    <i class="fa-solid fa-check-circle"></i>
+    <span id="toastMsg">Заявка скопирована!</span>
+</div>
 
-    <!-- FOOTER NAV / QUICK CONTACT -->
-    <footer class="fixed bottom-0 inset-x-0 bg-pubg-darkBg/95 backdrop-blur-md border-t border-pubg-border p-3 z-40 max-w-md mx-auto">
-        <div class="flex items-center justify-between text-xs text-gray-400">
-            <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <span>Клан «ТТшники» (Ур. 10)</span>
-            </div>
-            <button onclick="copyRawPost()" class="text-pubg-neonCyan hover:underline font-semibold flex items-center gap-1">
-                <i class="fa-solid fa-copy"></i> Скопировать текст поста
-            </button>
-        </div>
-    </footer>
+<script>
+    // Инициализация Telegram WebApp
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
 
-    <!-- JS LOGIC -->
-    <script>
-        // Initialize Telegram Mini App SDK
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-            // Set App header color to match dark background
-            if (tg.setHeaderColor) {
-                tg.setHeaderColor('#090A0F');
-            }
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        try {
+            tg.setHeaderColor('#0b0d14');
+        } catch(e){}
+        
+        // Автозаполнение Telegram username
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
+            document.getElementById('telegram').value = '@' + tg.initDataUnsafe.user.username;
+        }
+    }
+
+    // Переключение вкладок
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+
+        event.currentTarget.classList.add('active');
+        document.getElementById('tab-' + tabId).classList.add('active');
+
+        if (tg && tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
+        }
+    }
+
+    // Вспомогательная функция проверки TikTok
+    function formatTikTokValue(val) {
+        if (!val || val.trim() === '') return 'Нет';
+        const lower = val.trim().toLowerCase();
+        if (['нет', 'нету', 'нет профиля', 'нет аккаунта', '-', 'no'].includes(lower)) {
+            return 'Нет';
+        }
+        return val.trim();
+    }
+
+    // Генерация текста заявки
+    function generateText() {
+        const nickname = document.getElementById('nickname').value || '—';
+        const gameId = document.getElementById('gameId').value || '—';
+        const telegram = document.getElementById('telegram').value || '—';
+        const tiktokRaw = document.getElementById('tiktok').value;
+        const tiktok = formatTikTokValue(tiktokRaw);
+        const age = document.getElementById('age').value || '—';
+        const primetime = document.getElementById('primetime').value;
+
+        return `📋 АНКЕТА КАНДИДАТА В КЛАН:\n` +
+               `1. Игровой Ник: ${nickname}\n` +
+               `2. Игровой ID: ${gameId}\n` +
+               `3. Telegram: ${telegram}\n` +
+               `4. Ссылка на TikTok: ${tiktok}\n` +
+               `5. Возраст / Прайм-тайм: ${age} лет / ${primetime}`;
+    }
+
+    // Предпросмотр
+    function togglePreview() {
+        const preview = document.getElementById('previewBox');
+        if (preview.classList.contains('show')) {
+            preview.classList.remove('show');
+        } else {
+            preview.innerText = generateText();
+            preview.classList.add('show');
+        }
+    }
+
+    // Показ уведомления (Toast)
+    function showToast(text) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').innerText = text;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // Отправка формы
+    function handleFormSubmit(e) {
+        e.preventDefault();
+
+        const text = generateText();
+
+        if (tg && tg.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Tab Switching Logic
-        function switchTab(tabName) {
-            // Trigger Haptic Feedback if Telegram WebApp is available
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
+        // Копируем в буфер обмена
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("Заявка скопирована! Отправляем в ТГ...");
+        }).catch(() => {});
 
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        // Перенаправление на отправку сообщения (замените admin_username на ваш юзернейм)
+        const targetAdmin = "admin_username"; 
+        const shareUrl = `https://t.me/${targetAdmin}?text=${encodeURIComponent(text)}`;
 
-            if (tabName === 'form') {
-                document.getElementById('tabForm').classList.remove('hidden');
-                document.getElementById('tabFormBtn').classList.add('active');
-            } else if (tabName === 'req') {
-                document.getElementById('tabReq').classList.remove('hidden');
-                document.getElementById('tabReqBtn').classList.add('active');
-            } else if (tabName === 'media') {
-                document.getElementById('tabMedia').classList.remove('hidden');
-                document.getElementById('tabMediaBtn').classList.add('active');
-            }
-        }
-
-        // Helper to format TikTok value
-        function formatTikTokValue(value) {
-            const trimmed = value.trim().toLowerCase();
-            if (!trimmed || trimmed === 'нет' || trimmed === 'нету' || trimmed === 'нет профиля' || trimmed === '-') {
-                return 'Нет';
-            }
-            return value.trim();
-        }
-
-        // Form Submission & Text Formatting
-        function handleFormSubmit(e) {
-            e.preventDefault();
-
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-
-            const nick = document.getElementById('inputNick').value.trim();
-            const id = document.getElementById('inputId').value.trim();
-            let tgUser = document.getElementById('inputTg').value.trim();
-            const rawTikTok = document.getElementById('inputTikTok').value;
-            const tiktok = formatTikTokValue(rawTikTok);
-            const age = document.getElementById('inputAge').value.trim();
-            const prime = document.getElementById('inputPrimeTime').value;
-
-            if (!tgUser.startsWith('@') && !tgUser.startsWith('http')) {
-                tgUser = '@' + tgUser;
-            }
-
-            const formattedText = 
-`📋 АНКЕТА КАНДИДАТА В КЛАН «ТТшники»:
-1. Игровой Ник: ${nick}
-2. Игровой ID: ${id}
-3. Твой Telegram: ${tgUser}
-4. Ссылка на TikTok: ${tiktok}
-5. Возраст / Прайм-тайм: ${age} лет / ${prime}`;
-
-            // Copy to clipboard fallback logic
-            copyToClipboard(formattedText);
-            showToast('Заявка скопирована в буфер обмена!');
-
-            // Try opening direct Telegram share/message if possible
-            setTimeout(() => {
-                const encodedMsg = encodeURIComponent(formattedText);
-                window.location.href = `https://t.me/share/url?url=${encodedMsg}&text=${encodeURIComponent("Привет! Хочу вступить в клан ТТшники 🚀")}`;
-            }, 800);
-        }
-
-        // Live Preview Toggle
-        function togglePreview() {
-            const previewBox = document.getElementById('previewBox');
-            if (previewBox.classList.contains('hidden')) {
-                const nick = document.getElementById('inputNick').value || '...';
-                const id = document.getElementById('inputId').value || '...';
-                const tgUser = document.getElementById('inputTg').value || '...';
-                const tiktok = formatTikTokValue(document.getElementById('inputTikTok').value);
-                const age = document.getElementById('inputAge').value || '...';
-                const prime = document.getElementById('inputPrimeTime').value;
-
-                previewBox.innerText = 
-`📋 АНКЕТА КАНДИДАТА:
-1. Игровой Ник: ${nick}
-2. Игровой ID: ${id}
-3. Твой Telegram: ${tgUser}
-4. Ссылка на TikTok: ${tiktok}
-5. Возраст / Прайм-тайм: ${age} лет / ${prime}`;
-                previewBox.classList.remove('hidden');
+        setTimeout(() => {
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
             } else {
-                previewBox.classList.add('hidden');
+                window.open(shareUrl, '_blank');
             }
-        }
-
-        // Copy raw recruit post for chat sharing
-        function copyRawPost() {
-            if (tg?.HapticFeedback) {
-                tg.HapticFeedback.selectionChanged();
-            }
-
-            const postText = 
-`🔥 НАБОР В ТТШНИКИ PUBG MOBILE 🔥
-
-Мечтаешь развивать свой TikTok, делать сочный медиа-контент и играть в сплоченной команде? Мы открываем набор в наш клан! 🚀
-
-📱 Платформа: Любая  
-👥 Свободные места: 7 / 60 человек  
-
-⚡ ЧТО МЫ ЖДЕМ ОТ ТЕБЯ:
-- 🎮 Уровень аккаунта: 30+
-- ⏰ Высокая активность в игре
-- 🎬 Желание снимать TikTok и участвовать в роликах
-- 🗣 Общительность и адекватность
-
-📋 АНКЕТА КАНДИДАТА:
-1. Игровой Ник: 
-2. Игровой ID: 
-3. Твой Telegram: 
-4. Ссылка на TikTok (если есть): 
-5. Твой возраст / Прайм-тайм: 
-
-🔥 Залетай в команду и развивайся вместе с нами!`;
-
-            copyToClipboard(postText);
-            showToast('Текст поста скопирован!');
-        }
-
-        // Universal Clipboard Copy helper
-        function copyToClipboard(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                } catch (error) {
-                    console.error('Copy failed', error);
-                }
-                document.body.removeChild(textArea);
-            }
-        }
-
-        // Toast Helper
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            toastMsg.innerText = message;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
-        }
-
-        // Share Mini App Button listener
-        document.getElementById('shareBtn').addEventListener('click', () => {
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('🔥 Открыт набор в медиа-клан «ТТшники» PUBG Mobile! Подавай заявку через Mini App!')}`;
-            window.location.href = shareUrl;
-        });
-    </script>
+        }, 600);
+    }
+</script>
 </body>
 </html>
