@@ -500,7 +500,7 @@
 
                 <div style="margin-top: 16px;">
                     <button type="submit" class="btn-primary">
-                        <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В TELEGRAM
+                        <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ БОТУ
                     </button>
                 </div>
             </form>
@@ -649,7 +649,7 @@
         }, 3000);
     }
 
-    // Отправка формы
+    // Отправка формы напрямую БОТУ
     function handleFormSubmit(e) {
         e.preventDefault();
 
@@ -659,22 +659,15 @@
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Копируем в буфер обмена
-        navigator.clipboard.writeText(text).then(() => {
-            showToast("Заявка скопирована! Отправляем в ТГ...");
-        }).catch(() => {});
-
-        // Перенаправление на отправку сообщения (замените admin_username на ваш юзернейм)
-        const targetAdmin = "admin_username"; 
-        const shareUrl = `https://t.me/${targetAdmin}?text=${encodeURIComponent(text)}`;
-
-        setTimeout(() => {
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(shareUrl);
-            } else {
-                window.open(shareUrl, '_blank');
-            }
-        }, 600);
+        // Если открыто внутри Telegram Bot WebApp
+        if (tg && tg.sendData) {
+            tg.sendData(text); // Отправляет данные обратно боту и закрывает Web App
+        } else {
+            // Резервный вариант, если открыто просто в обычном браузере
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Скопировано! Вставьте текст в чат с ботом.");
+            });
+        }
     }
 </script>
 </body>
