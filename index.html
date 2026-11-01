@@ -6,7 +6,7 @@
     <title>Набор в клан ТТшники PUBG Mobile</title>
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -50,7 +50,7 @@
             margin: 0 auto;
         }
 
-        /* Header Card */
+        /* App Header / Banner */
         .header-card {
             background: linear-gradient(135deg, rgba(30, 15, 50, 0.9), rgba(15, 25, 45, 0.9));
             border: 1px solid rgba(255, 0, 85, 0.3);
@@ -183,7 +183,7 @@
             box-shadow: 0 4px 12px rgba(255, 0, 85, 0.3);
         }
 
-        /* Content Sections */
+        /* Form & Cards */
         .content-section {
             display: none;
         }
@@ -266,7 +266,7 @@
             gap: 12px;
         }
 
-        /* Preview */
+        /* Dynamic Preview */
         .preview-box {
             background: rgba(0, 0, 0, 0.4);
             border: 1px dashed var(--input-border);
@@ -358,7 +358,7 @@
             margin-top: 2px;
         }
 
-        /* Toast */
+        /* Toast Notifications */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -437,7 +437,7 @@
                 <span style="font-size: 11px; color: var(--text-muted);">Быстрый ответ</span>
             </div>
 
-            <form id="clanForm">
+            <form id="clanForm" onsubmit="handleFormSubmit(event)">
                 <div class="form-group">
                     <label class="form-label">1. Игровой Nickname <span>*</span></label>
                     <div class="input-wrapper">
@@ -446,23 +446,25 @@
                     </div>
                 </div>
 
+                <!-- Игровой ID: строго 11 цифр -->
                 <div class="form-group">
-                    <label class="form-label">2. Игровой ID <span>*</span></label>
+                    <label class="form-label">2. Игровой ID <span style="font-weight: normal; color: var(--text-muted);">(строго 11 цифр)</span> <span>*</span></label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-hashtag"></i>
-                        <input type="number" id="gameId" class="form-control" placeholder="Например: 5123456789" required>
+                        <input type="tel" id="gameId" class="form-control" placeholder="Например: 51234567890" maxlength="11" oninput="validateGameId(this)" required>
                     </div>
                 </div>
 
+                <!-- Telegram с защищенным символом @ -->
                 <div class="form-group">
                     <label class="form-label">3. Ваш Telegram (для связи) <span>*</span></label>
                     <div class="input-wrapper">
                         <i class="fa-brands fa-telegram"></i>
-                        <input type="text" id="telegram" class="form-control" placeholder="@username" required>
+                        <input type="text" id="telegram" class="form-control" value="@" oninput="enforceAtSymbol(this)" required>
                     </div>
                 </div>
 
-                <!-- ПОЛЕ TIKTOK (Текстовое, необязательное) -->
+                <!-- TikTok -->
                 <div class="form-group">
                     <label class="form-label">4. Ссылка на TikTok / Профиль <span style="color: var(--text-muted); font-weight: normal;">(если есть)</span></label>
                     <div class="input-wrapper">
@@ -493,6 +495,19 @@
                     </div>
                 </div>
 
+                <!-- Выбор языка (только русский, белорусский, казахский) -->
+                <div class="form-group">
+                    <label class="form-label">6. Язык общения <span>*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-globe"></i>
+                        <select id="userLang" class="form-control" required style="padding-left: 36px; appearance: none;">
+                            <option value="Русский" selected>Русский</option>
+                            <option value="Беларуская">Беларуская</option>
+                            <option value="Қазақша">Қазақша</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div style="margin-top: 10px;">
                     <button type="button" class="btn-secondary" onclick="togglePreview()">
                         <i class="fa-solid fa-eye"></i> Предпросмотр текста заявки
@@ -501,7 +516,7 @@
                 </div>
 
                 <div style="margin-top: 16px;">
-                    <button type="button" id="submitBtn" class="btn-primary" onclick="submitApplication()">
+                    <button type="submit" id="submitBtn" class="btn-primary">
                         <i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В ТЕЛЕГРАМ
                     </button>
                 </div>
@@ -573,19 +588,38 @@
 </div>
 
 <script>
+    const TELEGRAM_BOT_TOKEN = "9158129292:AAER7EjXp6FurLK1poyxMtvcZhhgyn0KwMg";
+    const TELEGRAM_CHAT_ID = "-1004355844765";
+
     const tg = window.Telegram ? window.Telegram.WebApp : null;
 
     if (tg) {
-        tg.ready();
-        tg.expand();
-        try {
-            tg.setHeaderColor('#0b0d14');
-        } catch(e){}
+        try { tg.expand(); } catch(e) {}
+        try { tg.setHeaderColor('#0b0d14'); } catch(e){}
         
-        // Автозаполнение username
+        // Автозаполнение username, сохраняя @
         if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.username) {
             document.getElementById('telegram').value = '@' + tg.initDataUnsafe.user.username;
         }
+    }
+
+    // Защита от удаления символа @ в телеграме
+    function enforceAtSymbol(input) {
+        if (!input.value.startsWith('@')) {
+            input.value = '@' + input.value.replace(/@/g, '');
+        }
+    }
+
+    // Проверка ID (строго цифры и максимум 11 символов)
+    function validateGameId(input) {
+        input.value = input.value.replace(/\D/g, ''); 
+        if (input.value.length > 11) {
+            input.value = input.value.slice(0, 11);
+        }
+    }
+
+    function sanitizeHTML(str) {
+        const div = document.createElement('div'); div.textContent = str; return div.innerHTML;
     }
 
     // Переключение вкладок
@@ -603,7 +637,6 @@
         }
     }
 
-    // Обработка значения TikTok
     function formatTikTokValue(val) {
         if (!val || val.trim() === '') return 'Нет';
         const lower = val.trim().toLowerCase();
@@ -613,7 +646,6 @@
         return val.trim();
     }
 
-    // Генерация текста
     function generateText() {
         const nickname = document.getElementById('nickname').value.trim() || '—';
         const gameId = document.getElementById('gameId').value.trim() || '—';
@@ -622,16 +654,17 @@
         const tiktok = formatTikTokValue(tiktokRaw);
         const age = document.getElementById('age').value.trim() || '—';
         const primetime = document.getElementById('primetime').value;
+        const userLang = document.getElementById('userLang').value;
 
-        return `📋 АНКЕТА КАНДИДАТА В КЛАН "ТТшники":\n` +
+        return `📋 АНКЕТА КАНДИДАТА В КЛАН:\n` +
                `1. Игровой Ник: ${nickname}\n` +
                `2. Игровой ID: ${gameId}\n` +
                `3. Telegram: ${telegram}\n` +
                `4. Ссылка на TikTok: ${tiktok}\n` +
-               `5. Возраст / Прайм-тайм: ${age} лет / ${primetime}`;
+               `5. Возраст / Прайм-тайм: ${age} лет / ${primetime}\n` +
+               `6. Язык общения: ${userLang}`;
     }
 
-    // Предпросмотр
     function togglePreview() {
         const preview = document.getElementById('previewBox');
         if (preview.classList.contains('show')) {
@@ -642,7 +675,6 @@
         }
     }
 
-    // Уведомление
     function showToast(text, isError = false) {
         const toast = document.getElementById('toast');
         const toastMsg = document.getElementById('toastMsg');
@@ -658,39 +690,69 @@
         }, 3500);
     }
 
-    // ГЛАВНАЯ ФУНКЦИЯ ОТПРАВКИ
-    function submitApplication() {
-        const nickname = document.getElementById('nickname').value.trim();
-        const gameId = document.getElementById('gameId').value.trim();
-        const telegram = document.getElementById('telegram').value.trim();
-        const age = document.getElementById('age').value.trim();
+    // Отправка формы в группу клана
+    function handleFormSubmit(e) {
+        e.preventDefault();
 
-        // Проверка заполнения обязательных полей
-        if (!nickname || !gameId || !telegram || !age) {
-            showToast("Заполните обязательные поля со звездочкой (*)", true);
+        const gameIdVal = document.getElementById('gameId').value.trim();
+        if (gameIdVal.length !== 11) {
+            showToast("Игровой ID должен содержать ровно 11 цифр!", true);
+            document.getElementById('gameId').focus();
             return;
         }
 
-        const text = generateText();
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Отправка...';
 
-        if (tg && tg.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred('success');
-        }
+        const nickname = sanitizeHTML(document.getElementById('nickname').value.trim());
+        const gameId = sanitizeHTML(gameIdVal);
+        const telegram = sanitizeHTML(document.getElementById('telegram').value.trim());
+        const tiktok = sanitizeHTML(formatTikTokValue(document.getElementById('tiktok').value));
+        const age = sanitizeHTML(document.getElementById('age').value.trim());
+        const primetime = sanitizeHTML(document.getElementById('primetime').value);
+        const userLang = sanitizeHTML(document.getElementById('userLang').value);
 
-        // Если Mini App открыт внутри бота — отправляем данные встроенным способом
-        if (tg && tg.sendData) {
-            tg.sendData(text);
-        } else {
-            // Если открыто по ссылке — копируем анкету и открываем чат
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("Анкета скопирована! Открываем чат...");
-            }).catch(() => {});
+        const messageText = `✨ *Новая заявка в клан ТТшники!*\n\n` +
+                            `👤 *Ник:* ${nickname}\n` +
+                            `🆔 *ID:* ${gameId}\n` +
+                            `📱 *Telegram:* ${telegram}\n` +
+                            `🎬 *TikTok:* ${tiktok}\n` +
+                            `⏰ *Возраст / Прайм-тайм:* ${age} лет (${primetime})\n` +
+                            `🌐 *Язык:* ${userLang}`;
 
-            setTimeout(() => {
-                // Переход в чат для вставки (вставьте свой юзернейм или юзернейм бота без @)
-                window.location.href = `https://t.me/WiliestMoon`;
-            }, 1000);
-        }
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: messageText,
+                parse_mode: 'Markdown'
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.ok) {
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+                showToast(`Спасибо, ${nickname}! Заявка отправлена в чат клана.`);
+                setTimeout(() => {
+                    try { tg.close(); } catch(err){}
+                }, 1500);
+            } else {
+                throw new Error(data.description || 'Ошибка отправки');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('error');
+            }
+            showToast("Ошибка отправки! Убедитесь, что бот добавлен в группу как админ.", true);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ОТПРАВИТЬ ЗАЯВКУ В ТЕЛЕГРАМ';
+        });
     }
 </script>
 </body>
