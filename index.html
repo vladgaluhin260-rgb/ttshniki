@@ -460,7 +460,7 @@
                     </div>
                 </div>
 
-                <!-- ПОЛЕ TIKTOK (Текстовое, НЕОБЯЗАТЕЛЬНОЕ) -->
+                <!-- ПОЛЕ TIKTOK (Текстовое, НЕОБЯЗАТЕЛЬНОЕ, без проверки url) -->
                 <div class="form-group">
                     <label class="form-label">4. Ссылка на TikTok / Профиль <span style="color: var(--text-muted); font-weight: normal;">(если есть)</span></label>
                     <div class="input-wrapper">
@@ -567,7 +567,7 @@
 <!-- Toast -->
 <div id="toast" class="toast">
     <i class="fa-solid fa-check-circle"></i>
-    <span id="toastMsg">Заявка скопирована!</span>
+    <span id="toastMsg">Заявка отправлена!</span>
 </div>
 
 <script>
@@ -600,7 +600,7 @@
         }
     }
 
-    // Вспомогательная функция проверки TikTok
+    // Обработка значения TikTok (если пусто или "нет", пишем "Нет")
     function formatTikTokValue(val) {
         if (!val || val.trim() === '') return 'Нет';
         const lower = val.trim().toLowerCase();
@@ -649,7 +649,7 @@
         }, 3000);
     }
 
-    // Отправка формы напрямую БОТУ
+    // Отправка формы напрямую БОТУ через Telegram WebApp
     function handleFormSubmit(e) {
         e.preventDefault();
 
@@ -659,14 +659,14 @@
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Если открыто внутри Telegram Bot WebApp
+        // Если открыто внутри Telegram — отправляем данные боту и закрываем мини-приложение
         if (tg && tg.sendData) {
-            tg.sendData(text); // Отправляет данные обратно боту и закрывает Web App
+            tg.sendData(text);
         } else {
-            // Резервный вариант, если открыто просто в обычном браузере
+            // Если открыто в обычном браузере для теста
             navigator.clipboard.writeText(text).then(() => {
-                showToast("Скопировано! Вставьте текст в чат с ботом.");
-            });
+                showToast("Скопировано в буфер обмена!");
+            }).catch(() => {});
         }
     }
 </script>
